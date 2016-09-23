@@ -106,6 +106,9 @@ def AligninferMain(args, pkl=True):
         print('Classifier load failed on folder %s: %s' % (os.getcwd(), e))
     
     args.image, bb, H = AlignMain(args,pkl=False)
+
+    if args.image is None:
+        return None, None, None, None
     
     net = openface.TorchNeuralNet(
         os.path.join(openfaceModelDir, args.networkModel), imgDim=args.size, cuda=args.cuda)
@@ -169,6 +172,9 @@ def AlignMain(args, pkl=True):
     if img is not None:
 
         bb = align.getLargestFaceBoundingBox(img, args.skipMulti)
+
+        if bb is None:
+            return None, None, None
         
         landmarks = align.findLandmarks(img, bb)
         npLandmarks = np.float32(landmarks)
