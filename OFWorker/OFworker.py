@@ -108,7 +108,7 @@ def AligninferMain(args, pkl=True):
     args.image, bb, H = AlignMain(args,pkl=False)
     
     net = openface.TorchNeuralNet(
-        args.networkModel, imgDim=args.size, cuda=args.cuda)
+        os.path.join(openfaceModelDir, args.networkModel), imgDim=args.size, cuda=args.cuda)
     
     predictions = clf.predict_proba(net.forward(args.image)).ravel()
     #maxI = np.argmax(predictions)
@@ -133,7 +133,7 @@ def InferMain(args, pkl=True):
     args.image = cv2.imdecode(img_array, -1)
     
     net = openface.TorchNeuralNet(
-        args.networkModel, imgDim=args.size, cuda=args.cuda)
+        os.path.join(openfaceModelDir, args.networkModel), imgDim=args.size, cuda=args.cuda)
     
     predictions = clf.predict_proba(net.forward(args.image)).ravel()
     #maxI = np.argmax(predictions)
@@ -252,7 +252,7 @@ if __name__ == '__main__':
         '--networkModel',
         type = str,
         help="Path to Torch network model.",
-        default=os.path.join(openfaceModelDir, 'nn4.small2.v1.t7')
+        default='nn4.small2.v1.t7'
     )
     
     inferParser.add_argument(
