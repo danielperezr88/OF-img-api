@@ -108,9 +108,9 @@ def AligninferMain(args, pkl=False):
     args.image, bb, H = AlignMain(args,pkl=False)
 
     if args.image is None and pkl:
-        return pickle.dumps(None), pickle.dumps(None), pickle.dumps(None), pickle.dumps(None)
+        return pickle.dumps(None), pickle.dumps(None)
     elif args.image is None:
-        return None, None, None, None
+        return None, None
 
     net = openface.TorchNeuralNet(
         os.path.join(openfaceModelDir, args.networkModel), imgDim=args.size, cuda=args.cuda)
