@@ -107,9 +107,11 @@ def AligninferMain(args, pkl=True):
     
     args.image, bb, H = AlignMain(args,pkl=False)
 
-    if args.image is None:
+    if args.image is None and pkl:
+        return pickle.dumps(None), pickle.dumps(None), pickle.dumps(None), pickle.dumps(None)
+    elif args.image is None:
         return None, None, None, None
-    
+
     net = openface.TorchNeuralNet(
         os.path.join(openfaceModelDir, args.networkModel), imgDim=args.size, cuda=args.cuda)
     
@@ -173,9 +175,11 @@ def AlignMain(args, pkl=True):
 
         bb = align.getLargestFaceBoundingBox(img, args.skipMulti)
 
-        if bb is None:
+        if bb is None and not pkl:
             return None, None, None
-        
+        elif bb is None:
+            return pickle.dumps(None), pickle.dumps(None), pickle.dumps(None)
+
         landmarks = align.findLandmarks(img, bb)
         npLandmarks = np.float32(landmarks)
         npLandmarkIndices = np.array(landmarkIndices)
