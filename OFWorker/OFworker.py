@@ -97,7 +97,7 @@ modelDir = os.path.join(fileDir, '..', '..', 'models')
 dlibModelDir = os.path.join(modelDir, 'dlib')
 openfaceModelDir = os.path.join(modelDir, 'openface')
 
-def AligninferMain(args, pkl=True):
+def AligninferMain(args, pkl=False):
     
     try:
         with open(args.classifierModel, 'r') as f:
@@ -121,11 +121,11 @@ def AligninferMain(args, pkl=True):
     #confidence = predictions[maxI]
     
     if pkl:
-        return pickle.dumps(le.classes_), pickle.dumps(predictions), pickle.dumps(bb), pickle.dumps(H)
+        return pickle.dumps(le.classes_.tolist()), pickle.dumps(predictions.tolist())
     else:
-        return le.classes_, predictions, bb, H
+        return le.classes_.tolist(), predictions.tolist()
 
-def InferMain(args, pkl=True):
+def InferMain(args, pkl=False):
     
     try:
         with open(args.classifierModel, 'r') as f:
@@ -146,11 +146,11 @@ def InferMain(args, pkl=True):
     #confidence = predictions[maxI]
     
     if pkl:
-        return pickle.dumps(le.classes_), pickle.dumps(predictions)
+        return pickle.dumps(le.classes_.tolist()), pickle.dumps(predictions.tolist())
     else:
-        return le.classes_, predictions
+        return le.classes_.tolist(), predictions.tolist()
     
-def AlignMain(args, pkl=True):
+def AlignMain(args, pkl=False):
     
     url_response = urllib.urlopen(args.image)
     img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
