@@ -116,6 +116,9 @@ def AligninferMain(args, pkl=False):
         os.path.join(openfaceModelDir, args.networkModel), imgDim=args.size, cuda=args.cuda)
     
     predictions = clf.predict_proba(net.forward(args.image)).ravel()
+
+    del net
+
     #maxI = np.argmax(predictions)
     #label = le.inverse_transform(maxI)
     #confidence = predictions[maxI]
@@ -141,6 +144,9 @@ def InferMain(args, pkl=False):
         os.path.join(openfaceModelDir, args.networkModel), imgDim=args.size, cuda=args.cuda)
     
     predictions = clf.predict_proba(net.forward(args.image)).ravel()
+
+    del net
+
     #maxI = np.argmax(predictions)
     #label = le.inverse_transform(maxI)
     #confidence = predictions[maxI]
