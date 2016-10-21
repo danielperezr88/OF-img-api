@@ -10,6 +10,7 @@ import os
 import cv2
 import numpy as np
 import pickle
+import functools
 
 import urllib
 
@@ -55,6 +56,17 @@ TEMPLATE = np.float32([
 TPL_MIN, TPL_MAX = np.min(TEMPLATE, axis=0), np.max(TEMPLATE, axis=0)
 MINMAX_TEMPLATE = (TEMPLATE - TPL_MIN) / (TPL_MAX - TPL_MIN)
 
+def memoize(obj):
+    cache = obj.cache = {}
+
+    @functools.wraps(obj)
+    def memoizer(*args, **kwargs):
+        key = str(args) + str(kwargs)
+        if key not in cache:
+            cache[key] = obj(*args, **kwargs)
+        return cache[key]
+    return memoizer
+
 def align_v2 (rgbImg, H, imgDim):
     imgWidth = np.shape(rgbImg)[1]
     imgHeight = np.shape(rgbImg)[0]
@@ -97,6 +109,10 @@ modelDir = os.path.join(fileDir, '..', '..', 'models')
 dlibModelDir = os.path.join(modelDir, 'dlib')
 openfaceModelDir = os.path.join(modelDir, 'openface')
 
+@memoize
+def myNNPlz(path,imgDir,cuda):
+    return openface.TorchNeuralNet(path,imgDir=imgDir,cuda=cuda)
+
 def AligninferMain(args, pkl=False):
     
     try:
@@ -112,12 +128,9 @@ def AligninferMain(args, pkl=False):
     elif args.image is None:
         return None, None
 
-    net = openface.TorchNeuralNet(
-        os.path.join(openfaceModelDir, args.networkModel), imgDim=args.size, cuda=args.cuda)
+    net = myNNPlz(os.path.join(openfaceModelDir, args.networkModel), args.size, args.cuda)
     
     predictions = clf.predict_proba(net.forward(args.image)).ravel()
-
-    del net
 
     #maxI = np.argmax(predictions)
     #label = le.inverse_transform(maxI)
@@ -140,12 +153,9 @@ def InferMain(args, pkl=False):
     img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
     args.image = cv2.imdecode(img_array, -1)
     
-    net = openface.TorchNeuralNet(
-        os.path.join(openfaceModelDir, args.networkModel), imgDim=args.size, cuda=args.cuda)
+    net = myNNPlz(os.path.join(openfaceModelDir, args.networkModel), args.size, args.cuda)
     
     predictions = clf.predict_proba(net.forward(args.image)).ravel()
-
-    del net
 
     #maxI = np.argmax(predictions)
     #label = le.inverse_transform(maxI)
