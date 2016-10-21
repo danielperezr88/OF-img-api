@@ -110,8 +110,8 @@ dlibModelDir = os.path.join(modelDir, 'dlib')
 openfaceModelDir = os.path.join(modelDir, 'openface')
 
 @memoize
-def myNNPlz(path,imgDir,cuda):
-    return openface.TorchNeuralNet(path,imgDir=imgDir,cuda=cuda)
+def myNNPlz(path,imgDim,cuda):
+    return openface.TorchNeuralNet(path,imgDim=imgDim,cuda=cuda)
 
 def AligninferMain(args, pkl=False):
     
